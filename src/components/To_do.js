@@ -13,8 +13,7 @@ function To_do() {
     const [taskname, settaskname] = useState('')
     const [tasks, settasks] = useState([])
     const [status, setstatus] = useState('')
-
-
+    
     useEffect(() => {
         axios.get(API_BASE_URL)
             .then(response => settasks(response.data))
@@ -54,8 +53,7 @@ function To_do() {
                 newErrors[error.path] = error.message;
             });
             setmessage(newErrors);
-        }
-    };
+        }};
     
     const handledelete = (id) => {
         axios.delete(`${API_BASE_URL}/${id}`)
@@ -76,11 +74,13 @@ function To_do() {
             }
         }
     }
-
     const [id, setid] = useState(false)
     const handleUpdate = (id) => {
-        
-        axios.put(`${API_BASE_URL}/${id}`, { title: taskname, status:status })
+        if (!id) { 
+            toast.error("No task selected for update");
+            return;
+        }
+        axios.put(`${API_BASE_URL}/${id}`, { title: taskname,status })
             .then(response => {
                 settasks(tasks.map(t => (t.id === id ? response.data : t))); 
                 toast.success("EDITED");
@@ -99,13 +99,11 @@ function To_do() {
             })
             .catch(error => console.error("Error updating status:", error));
     };
-    
-
 
     return (
         <div className='to-do-container'>
             <h1>TO-DO-LIST</h1>
-            <ToastContainer />
+            <ToastContainer/>
             <form onSubmit={handlesubmit} >
                 <div className='input-container'>
                     <label id='label' htmlFor='task-input'>Task:</label>
@@ -148,8 +146,7 @@ function To_do() {
                             <td><button className='edit-btn' onClick={() => handledelete(t.id)} >DELETE</button></td>
                             <td><button className='delete-btn' onClick={() => handleEdit(t.id)} >EDIT</button></td>
                         </tr>
-                    ))
-                    }
+                    ))}
                 </tbody>
             </table>
         </div>
