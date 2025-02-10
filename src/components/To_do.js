@@ -7,7 +7,7 @@ import axios from 'axios';
 import { useEffect } from 'react';
 
 function To_do() {
-    const API_BASE_URL = "http://localhost:3000/todos";  
+    const API_BASE_URL = "http://localhost:5000/todos";  
     console.log(API_BASE_URL)
 
     const [taskname, settaskname] = useState('')
@@ -34,7 +34,7 @@ function To_do() {
         e.preventDefault();
         try {
             if (await validationSchema.isValid({ taskname, status })) {
-                const newtask = { title: taskname, status:status };
+                const newtask = { title: taskname, status };
                 axios.post(API_BASE_URL, newtask)
                     .then(response => {
                         settasks([...tasks, response.data]); 
@@ -53,6 +53,7 @@ function To_do() {
                 newErrors[error.path] = error.message;
             });
             setmessage(newErrors);
+            console.log(newErrors)
         }};
     
     const handledelete = (id) => {
@@ -80,7 +81,7 @@ function To_do() {
             toast.error("No task selected for update");
             return;
         }
-        axios.put(`${API_BASE_URL}/${id}`, { title: taskname,status })
+        axios.put(`${API_BASE_URL}/${id}`, { title: taskname, status })
             .then(response => {
                 settasks(tasks.map(t => (t.id === id ? response.data : t))); 
                 toast.success("EDITED");
