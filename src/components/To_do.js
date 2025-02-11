@@ -7,18 +7,39 @@ import axios from 'axios';
 import { useEffect } from 'react';
 
 function To_do() {
-    const API_BASE_URL = "http://localhost:5000/todos";  
+    const API_BASE_URL = "http://localhost:5000/todos";
     console.log(API_BASE_URL)
 
     const [taskname, settaskname] = useState('')
     const [tasks, settasks] = useState([])
     const [status, setstatus] = useState('')
-    
+
+    const token = localStorage.getItem('token')
+    const username = localStorage.getItem('username')
+    const userid=localStorage.getItem('userId')
+
     useEffect(() => {
-        axios.get(API_BASE_URL)
-            .then(response => settasks(response.data))
-            .catch(error => console.error("Error fetching todos:", error));
+        const fetchTasks = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                if (!token) {
+                    alert("User not authenticated, please log in");
+                    return;
+                }
+
+                const response = await axios.get(API_BASE_URL, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                settasks(response.data);
+            } catch (error) {
+                console.error("Error fetching tasks:", error);
+            }
+        };
+
+        fetchTasks();
     }, []);
+
 
     const validationSchema = Yup.object().shape({
         taskname: Yup.string()
@@ -29,19 +50,24 @@ function To_do() {
             .required("Status is required"),
     })
     const [message, setmessage] = useState({})
-    
+
     const handlesubmit = async (e) => {
         e.preventDefault();
         try {
             if (await validationSchema.isValid({ taskname, status })) {
                 const newtask = { title: taskname, status };
-                axios.post(API_BASE_URL, newtask)
+                if (!token) {
+                    alert("user not authenticated,please log in")
+                    return;
+                }
+                axios.post(API_BASE_URL, newtask, { headers: { Authorization: `Bearer ${token}` } })
                     .then(response => {
-                        settasks([...tasks, response.data]); 
-                        toast.success("ADDED");
+                        settasks([...tasks, response.data]);
+
+                        toast.success("Task added successfully!");
                         settaskname("");
                         setstatus("");
-                        setmessage('')
+                        setmessage({});
                     })
                     .catch(error => console.error("Error adding task:", error));
             } else {
@@ -54,17 +80,18 @@ function To_do() {
             });
             setmessage(newErrors);
             console.log(newErrors)
-        }};
-    
+        }
+    };
+
     const handledelete = (id) => {
         axios.delete(`${API_BASE_URL}/${id}`)
             .then(() => {
-                settasks(tasks.filter(t => t.id !== id)); 
+                settasks(tasks.filter(t => t.id !== id));
                 toast.error("DELETED");
             })
             .catch(error => console.error("Error deleting task:", error));
     };
-    
+
     const handleEdit = (id) => {
         let tem = [...tasks]
         for (var i = 0; i < tem.length; i++) {
@@ -77,13 +104,13 @@ function To_do() {
     }
     const [id, setid] = useState(false)
     const handleUpdate = (id) => {
-        if (!id) { 
+        if (!id) {
             toast.error("No task selected for update");
             return;
         }
-        axios.put(`${API_BASE_URL}/${id}`, { title: taskname, status })
+        axios.patch(`${API_BASE_URL}/${id}`, { title: taskname, status })
             .then(response => {
-                settasks(tasks.map(t => (t.id === id ? response.data : t))); 
+                settasks(tasks.map(t => (t.id === id ? response.data : t)));
                 toast.success("EDITED");
                 setid('');
                 settaskname("");
@@ -91,7 +118,7 @@ function To_do() {
             })
             .catch(error => console.error("Error updating task:", error));
     };
-    
+
     const handlestatusupdate = (status, id) => {
         axios.put(`${API_BASE_URL}/${id}`, { status })
             .then(() => {
@@ -101,10 +128,11 @@ function To_do() {
             .catch(error => console.error("Error updating status:", error));
     };
 
+
     return (
         <div className='to-do-container'>
-            <h1>TO-DO-LIST</h1>
-            <ToastContainer/>
+            <h1>TO-DO-LIST OF {username} {userid}</h1>
+            <ToastContainer />
             <form onSubmit={handlesubmit} >
                 <div className='input-container'>
                     <label id='label' htmlFor='task-input'>Task:</label>
