@@ -39,6 +39,7 @@
     border: none;
     border-radius: 5px;
     background-color: #2e60ea;
+    margin-left: 10px;
   
 }
 
@@ -82,4 +83,10 @@ input{
   float: left;
   color: white; 
 }
+
+.label {
+  font-size: 16px; 
+  color: white; 
+}
+
 

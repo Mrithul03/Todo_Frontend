@@ -13,18 +13,18 @@ function Login() {
     const navigate = useNavigate()
     const handlesubmit = async (e) => {
         e.preventDefault();
-        const values={ username:username,password:password}
-        axios.post('http://localhost:5000/login', values,{headers: { "Content-Type": "application/json" }})
+        const values = { username: username, password: password }
+        axios.post('http://localhost:5000/login', values, { headers: { "Content-Type": "application/json" } })
             .then(res => {
-                localStorage.setItem('token',res.data.token)
-                localStorage.setItem('username',res.data.username)
-                localStorage.setItem('userId',res.data.userId)
-                const username=localStorage.getItem("username")
+                localStorage.setItem('token', res.data.token)
+                localStorage.setItem('username', res.data.username)
+                localStorage.setItem('userId', res.data.userId)
+                const username = localStorage.getItem("username")
                 console.log(username)
                 navigate('/home')
                 toast.success("login succesfully successfully")
             })
-            
+
 
             .catch(err => console.log(err))
     }
@@ -34,8 +34,9 @@ function Login() {
             <h1>LOGIN</h1>
             <form onSubmit={handlesubmit}>
                 <div>
-                    <label>UserName:</label>
+                    <label class='label'>UserName:</label>
                     <input
+                        className='input_btn'
                         type='text'
                         placeholder='UserName'
                         value={username}
@@ -43,8 +44,9 @@ function Login() {
                     />
                 </div>
                 <div>
-                    <label>password:</label>
+                    <label class='label'>password:</label>
                     <input
+                        className='input_btn'
                         type='password'
                         placeholder='password'
                         value={password}
@@ -52,7 +54,7 @@ function Login() {
                     />
                 </div>
                 <div>
-                    <button type='submit'>LOGIN</button>
+                    <button id='btn' type='submit'>LOGIN</button>
                 </div>
 
             </form>

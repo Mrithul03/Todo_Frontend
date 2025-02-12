@@ -14,7 +14,7 @@ function Signup() {
     const navigate = useNavigate()
     const handlesubmit = async (e) => {
         e.preventDefault();
-        const values={ username, email, password}
+        const values = { username, email, password }
         console.log(values)
         axios.post('http://localhost:5000/signup', values)
             .then(res => {
@@ -25,18 +25,19 @@ function Signup() {
             .catch(err => console.log(err))
     }
 
-    const login=()=>{
+    const login = () => {
         navigate('/login')
     }
-  
+
     return (
         <div className='to-do-container'>
             <ToastContainer />
             <h1>SIGN_UP</h1>
             <form onSubmit={handlesubmit}>
                 <div>
-                    <label>UserName:</label>
+                    <label class='label'>UserName:</label>
                     <input
+                        className='input_btn'
                         type='text'
                         placeholder='UserName'
                         value={username}
@@ -44,8 +45,9 @@ function Signup() {
                     />
                 </div>
                 <div>
-                    <label>Email:</label>
+                    <label class='label'>Email:</label>
                     <input
+                        className='input_btn'
                         type='Email'
                         placeholder='Email'
                         value={email}
@@ -53,18 +55,19 @@ function Signup() {
                     />
                 </div>
                 <div>
-                    <label>Password:</label>
+                    <label class='label'>Password:</label>
                     <input
-                        type='text'
+                        className='input_btn'
+                        type='password'
                         placeholder='Password'
                         value={password}
                         onChange={(e) => setpassword(e.target.value)}
                     />
                 </div>
                 <div>
-                    <button type='submit'>SIGNUP</button>
-                    <button  onClick={login}>LOGIN</button>
-                    
+                    <button id='btn' type='submit'>SIGNUP</button>
+                    <button id='btn' onClick={login}>LOGIN</button>
+
                 </div>
 
 
